@@ -1,5 +1,5 @@
 
-outro = images.create_big_image("""
+level_one = images.create_big_image("""
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . # # # # . . . #
     . . . . . . # # . . . . . . . . . . . #
@@ -22,27 +22,21 @@ notes = [
 ]
 
 music.start_melody(notes, MelodyOptions.FOREVER_IN_BACKGROUND)
+x = 0
 movement()
-
-
-# this is the outro partfor       
+    
 
 def movement():
-    x = 0
-    while True:
-        if (input.button_is_pressed(Button.B)):
-            x += 1
-        elif (input.button_is_pressed(Button.A)):
-            x -= 1
+    global x
 
-        if (x < -2):
-            x = -2
-            outro.show_image(x)
-        elif (x > 16):
-            x = 16
-            outro.show_image(x)
-        else:
-            outro.show_image(x)
+    if (x < -2):
+        x = -2
+        level_one.show_image(x)
+    elif (x > 16):
+        x = 16
+        level_one.show_image(x)
+    else:
+        level_one.show_image(x)
 
 
         
