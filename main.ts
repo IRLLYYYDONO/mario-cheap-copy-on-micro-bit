@@ -17,6 +17,7 @@ let player_yOffset = 2
 let player_Speed = 250
 // player speed is messured in ms
 // Start of code
+music.setVolume(200)
 music.startMelody(notes, MelodyOptions.ForeverInBackground)
 while (true) {
     if (input.buttonIsPressed(Button.A)) {
@@ -29,6 +30,8 @@ while (true) {
     
 }
 function player_movementVerification(button: string) {
+    // giving permission to another veriable in another function
+    player_movementVerification("")
     // giving permission
     
     // resposible for changing the xOffset, this is important because it makes the
@@ -74,5 +77,16 @@ function playerCollision() {
     // player collision check backwards
     let player_backwards_partone = led.pointBrightness(1, player_yOffset)
     let player_backwards_parttwo = led.pointBrightness(1, player_yOffset + 1)
+    // player collision check upwards
+    let player_above = led.pointBrightness(2, player_yOffset - 1)
+    // player collision check downwards
+    let player_downwards = led.pointBrightness(2, player_yOffset + 2)
+    // configuring the onGround Veriables
+    if (player_downwards < 0) {
+        onGround = false
+    } else if (player_downwards > 0) {
+        onGround = true
+    }
+    
 }
 
