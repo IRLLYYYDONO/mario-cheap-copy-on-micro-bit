@@ -3,13 +3,12 @@
 
 // Maps
 let level_one = images.createBigImage(`
+    . . . . . . . . . . . . # # # . . . . .
     . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . # # # # . . . #
-    . . . . . . # # . . . . . . . . . . . #
+    . . . . . . # # . . . . . . . . . . . .
     . . # # # # . . # . . . # # # # . . # #
     # # . . . . . . . # # # . . . . . . . .
 `)
-
 
 // Music array
 let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", 
@@ -22,9 +21,11 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
             "e4", "g", "c5", "a3", "c4", "e", "g", "c5", "e4", "g", "c5", "a3", "c4", "e", "g", "c5", "e4", "g",
             "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "g3",
             "b", "d4", "g", "b", "d", "g", "b", "g3", "b3", "d4", "g", "b", "d", "g", "b"]
+
 // Veriables
 let xOffset = -2
 let onGround = false
+let n = 1
 
 //player info 
 let player_yOffset = 2
@@ -37,6 +38,12 @@ let player_forwards_parttwo = 0
 // player collision check backwards
 let player_backwards_partone = 0
 let player_backwards_parttwo = 0
+
+//jumping
+let isJumping = false
+let hieght = 2
+let player_downwards = 0
+let player_above = 0
 
 
 // Start of code
@@ -52,20 +59,28 @@ while (true) {
 
     // input for button A and B
     if (input.buttonIsPressed(Button.A)) {
-        player_movementVerification("a")
+        if (n == 1) {
+            n = 2
+            player_movement("b")
+        } else if (n == 2) {
+            n = 1
+            player_movement("a")
+        }
         playerGravity_yOffset()
         renderAll()
     }
     
     if (input.buttonIsPressed(Button.B)) {
-        player_movementVerification("b")
+        goingToJump()
         playerGravity_yOffset()
         renderAll()
     }
-    
+
 }
 
-function player_movementVerification(button: string) {
+// this function is resposible for all the player movement in the game
+// this is used as a organization tool, for all the important veriables
+function player_movement(button: string) {
 
     // resposible for changing the xOffset, this is important because it makes the
     // rendering function able to move the map according to the xOffset
@@ -78,15 +93,17 @@ function player_movementVerification(button: string) {
     // limit where the player could move, so the player wont move off the map
     if (xOffset < -2) {
         xOffset = -2
-    } else if (xOffset > 16) {
-        xOffset = 16
+    } else if (xOffset > 17) {
+        xOffset = 17
     }
 
 }
 
-    
+// this is responsible for deciding wether the gravity should be apllied or not    
+// dependding on wether we are on the ground or not, this is also intigrated with
+// the jumping function
 function playerGravity_yOffset() {
-    if (onGround == false) {
+    if (onGround == false && isJumping == false) {
         player_yOffset += 1
     } else{
         return
@@ -94,6 +111,8 @@ function playerGravity_yOffset() {
         
 }
 
+// this is resposible for all the collision dectection befor the movement
+// function 
 function playerCollision() {
     // giving permission
         
@@ -106,10 +125,10 @@ function playerCollision() {
     player_backwards_parttwo = led.pointBrightness(1, player_yOffset + 1)
     
     // player collision check upwards
-    let player_above = led.pointBrightness(2, player_yOffset - 1)
+    player_above = led.pointBrightness(2, player_yOffset - 1)
     
     // player collision check downwards
-    let player_downwards = led.pointBrightness(2, player_yOffset + 2)
+    player_downwards = led.pointBrightness(2, player_yOffset + 2)
     
     // configuring the onGround Veriables
     if (player_downwards < 1) {
@@ -122,7 +141,10 @@ function playerCollision() {
 
 function renderAll() {
     level_one.showImage(xOffset, player_Speed)
-
     led.plot(2, player_yOffset)
     led.plot(2, player_yOffset + 1)
+}
+
+function goingToJump() {
+    isJumping = true
 }
