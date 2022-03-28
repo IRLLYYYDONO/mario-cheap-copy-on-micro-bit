@@ -23,43 +23,73 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
             "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "g3",
             "b", "d4", "g", "b", "d", "g", "b", "g3", "b3", "d4", "g", "b", "d", "g", "b"]
 // Veriables
-let xOffset = 0
+let xOffset = -2
 let onGround = false
+
+//player info 
 let player_yOffset = 2
-let player_Speed = 250
+let player_Speed = 250 // player speed is messured in ms
+
+// player collision check forward
+let player_forwards_partone = 0
+let player_forwards_parttwo = 0
+
+// player collision check backwards
+let player_backwards_partone = 0
+let player_backwards_parttwo = 0
 
 
-// player speed is messured in ms
 // Start of code
 music.setVolume(200)
 music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
+level_one.showImage(-2)
 
 while (true) {
+
+    //configure the collision
+    playerCollision()
+
     // input for button A and B
     if (input.buttonIsPressed(Button.A)) {
         player_movementVerification("a")
+        playerGravity_yOffset()
+        renderAll()
     }
     
     if (input.buttonIsPressed(Button.B)) {
         player_movementVerification("b")
+        playerGravity_yOffset()
+        renderAll()
     }
     
 }
 
-function playerInfo() {
-    // giving permission
-        
-    // this is the
-    let player_LED_one = [2, player_yOffset]
-    let player_LED_two = [2, player_yOffset + 1]
+function player_movementVerification(button: string) {
+
+    // resposible for changing the xOffset, this is important because it makes the
+    // rendering function able to move the map according to the xOffset
+    if (button == "a" && player_backwards_partone <= 0 && player_backwards_parttwo <= 0) {
+        xOffset -= 1
+    } else if (button == "b" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
+        xOffset += 1
+    }
+
+    // limit where the player could move, so the player wont move off the map
+    if (xOffset < -2) {
+        xOffset = -2
+    } else if (xOffset > 16) {
+        xOffset = 16
+    }
+
 }
+
     
 function playerGravity_yOffset() {
-    // giving permission
-    
     if (onGround == false) {
-        player_yOffset -= 1
+        player_yOffset += 1
+    } else{
+        return
     }
         
 }
@@ -68,12 +98,12 @@ function playerCollision() {
     // giving permission
         
     // player collision check forward
-    let player_forwards_partone = led.pointBrightness(3, player_yOffset)
-    let player_forwards_parttwo = led.pointBrightness(3, player_yOffset + 1)
+    player_forwards_partone = led.pointBrightness(3, player_yOffset)
+    player_forwards_parttwo = led.pointBrightness(3, player_yOffset + 1)
     
     // player collision check backwards
-    let player_backwards_partone = led.pointBrightness(1, player_yOffset)
-    let player_backwards_parttwo = led.pointBrightness(1, player_yOffset + 1)
+    player_backwards_partone = led.pointBrightness(1, player_yOffset)
+    player_backwards_parttwo = led.pointBrightness(1, player_yOffset + 1)
     
     // player collision check upwards
     let player_above = led.pointBrightness(2, player_yOffset - 1)
@@ -82,32 +112,17 @@ function playerCollision() {
     let player_downwards = led.pointBrightness(2, player_yOffset + 2)
     
     // configuring the onGround Veriables
-    if (player_downwards < 0) {
+    if (player_downwards < 1) {
         onGround = false
-    } else if (player_downwards > 0) {
+    } else if (player_downwards > 1) {
         onGround = true
     }
         
 }
 
+function renderAll() {
+    level_one.showImage(xOffset, player_Speed)
 
-function player_movementVerification(button: string) {
-    // giving permission
-    
-    // resposible for changing the xOffset, this is important because it makes the
-    // rendering function able to move the map according to the xOffset
-    if (button == "a") {
-        xOffset -= 1
-    } else if (button == "b") {
-        xOffset += 1
-    }
-    
-    // limit where the player could move, so the player wont move off the map
-    if (xOffset < -2) {
-        xOffset = -2
-    } else if (xOffset > 16) {
-        xOffset = 16
-    }
-    
+    led.plot(2, player_yOffset)
+    led.plot(2, player_yOffset + 1)
 }
-
