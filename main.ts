@@ -6,7 +6,7 @@ let level_one = images.createBigImage(`
     . . . . . . . . . . . . # # # . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
-    . . # # # # . . # . . . # # # # . . # #
+    . . # . . # . . # . . . # # # # . . # #
     # # . . . . . . . # # # . . . . . . . .
 `)
 
@@ -41,9 +41,10 @@ let player_backwards_parttwo = 0
 
 //jumping
 let isJumping = false
-let hieght = 2
+let hieght = 0
 let player_downwards = 0
 let player_above = 0
+let jumpStateObjectCheck = 0
 
 
 // Start of code
@@ -59,13 +60,7 @@ while (true) {
 
     // input for button A and B
     if (input.buttonIsPressed(Button.A)) {
-        if (n == 1) {
-            n = 2
-            player_movement("b")
-        } else if (n == 2) {
-            n = 1
-            player_movement("a")
-        }
+        player_movement("b")
         playerGravity_yOffset()
         renderAll()
     }
@@ -129,6 +124,9 @@ function playerCollision() {
     
     // player collision check downwards
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
+
+    jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 1)
+
     
     // configuring the onGround Veriables
     if (player_downwards < 1) {
@@ -147,4 +145,8 @@ function renderAll() {
 
 function goingToJump() {
     isJumping = true
+    if (onGround == true && player_above < 1 && isJumping == true) {
+        player_yOffset -= 2
+        isJumping = false
+    }
 }
