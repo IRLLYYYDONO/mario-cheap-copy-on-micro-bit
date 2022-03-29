@@ -125,6 +125,7 @@ function playerCollision() {
     // player collision check downwards
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
 
+    // check object in the way of the jumping trajectory 
     jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 1)
 
     
