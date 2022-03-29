@@ -3,7 +3,7 @@
 
 // Maps
 let level_one = images.createBigImage(`
-    . . . . . . . . . . . . # # # . . . . .
+    . . . . . . . . . . . . # # . . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
     . . # # # # . . # . . . # # # # . . # #
@@ -58,13 +58,14 @@ while (true) {
     //configure the collision
     playerCollision()
 
-    // input for button A and B
+    // input for button A for going forward
     if (input.buttonIsPressed(Button.A)) {
         player_movement("b")
         playerGravity_yOffset()
         renderAll()
     }
     
+    // input for button B for jumping
     if (input.buttonIsPressed(Button.B)) {
         goingToJump()
         playerGravity_yOffset()
@@ -131,7 +132,6 @@ function playerCollision() {
 
     // check object in the way of the jumping trajectory 
     jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 2)
-
     
     // configuring the onGround Veriables
     if (player_downwards < 1) {
