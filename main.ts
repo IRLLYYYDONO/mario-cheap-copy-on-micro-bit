@@ -6,7 +6,7 @@ let level_one = images.createBigImage(`
     . . . . . . . . . . . . # # # . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
-    . . # . . # . . # . . . # # # # . . # #
+    . . # # # # . . # . . . # # # # . . # #
     # # . . . . . . . # # # . . . . . . . .
 `)
 
@@ -98,7 +98,11 @@ function player_movement(button: string) {
 // dependding on wether we are on the ground or not, this is also intigrated with
 // the jumping function
 function playerGravity_yOffset() {
-    if (onGround == false && isJumping == false) {
+    
+    // this here is important because one this if statment fix all the problems
+    // that is connected to the jumping machanic and gravity mechanic, you see
+    // without this checking 
+    if (onGround == false && isJumping == false && jumpStateObjectCheck < 1) {
         player_yOffset += 1
     } else{
         return
@@ -126,7 +130,7 @@ function playerCollision() {
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
 
     // check object in the way of the jumping trajectory 
-    jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 1)
+    jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 2)
 
     
     // configuring the onGround Veriables
@@ -138,16 +142,18 @@ function playerCollision() {
         
 }
 
+// responsible for rendering the player and the map
 function renderAll() {
     level_one.showImage(xOffset, player_Speed)
     led.plot(2, player_yOffset)
     led.plot(2, player_yOffset + 1)
 }
 
+// responsible for jumping 
 function goingToJump() {
     isJumping = true
     if (onGround == true && player_above < 1 && isJumping == true) {
-        player_yOffset -= 2
+        player_yOffset -= 1
         isJumping = false
     }
 }
