@@ -155,7 +155,7 @@ function renderAll() {
 function goingToJump() {
     isJumping = true
     if (onGround == true && player_above < 1 && isJumping == true) {
-        player_yOffset -= 1
+        player_yOffset -= 2
         isJumping = false
     }
 }
