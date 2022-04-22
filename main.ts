@@ -51,6 +51,7 @@ let jumpStateObjectCheck = 0
 music.setVolume(200)
 music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
+// Start the level
 level_one.showImage(-2)
 
 while (true) {
@@ -68,7 +69,6 @@ while (true) {
     // input for button B for jumping
     if (input.buttonIsPressed(Button.B)) {
         goingToJump()
-        playerGravity_yOffset()
         renderAll()
     }
 
@@ -100,10 +100,9 @@ function player_movement(button: string) {
 // the jumping function
 function playerGravity_yOffset() {
 
-    // this here is important because one this if statment fix all the problems
-    // that is connected to the jumping machanic and gravity mechanic, you see
-    // without this checking 
-    if (onGround == false && isJumping == false && jumpStateObjectCheck < 1) {
+    // this checks if the player is on the ground or not and it also checks it the
+    // player is jumping or not
+    if (onGround == false && isJumping == false) {
         player_yOffset += 1
     } else {
         return
