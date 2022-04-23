@@ -3,10 +3,10 @@
 
 // Maps
 let level_one = images.createBigImage(`
-    . . . . . . . . . . . . # # . . . . . .
+    . . . . . . . . . . . # # # . . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
-    . . # # # # . . # . . . # # # # . . # #
+    . . # # # # . . # . . . # # # . . . # #
     # # . . . . . . . # # # . . . . . . . .
 `)
 
@@ -25,11 +25,12 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
 // Veriables
 let xOffset = -2
 let onGround = false
-let n = 1
 
 //player info 
 let player_yOffset = 2
-let player_Speed = 250 // player speed is messured in ms
+let player_speed = 250 // player speed is messured in ms
+let player_downwards = 0
+let player_above = 0
 
 // player collision check forward
 let player_forwards_partone = 0
@@ -40,24 +41,20 @@ let player_backwards_partone = 0
 let player_backwards_parttwo = 0
 
 //jumping
-let isJumping = false
-let hieght = 0
-let player_downwards = 0
-let player_above = 0
-let jumpStateObjectCheck = 0
+let player_jump_trajectory = 0
+let jumpStateObjectCheck = false
 
 
 // Start of code
 music.setVolume(200)
 music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
+//music.startMelody(notes, MelodyOptions.Forever)
+
 // Start the level
 level_one.showImage(-2)
 
 while (true) {
-
-    //configure the collision
-    playerCollision()
 
     // input for button A for going forward
     if (input.buttonIsPressed(Button.A)) {
@@ -78,9 +75,15 @@ while (true) {
 // this is used as a organization tool, for all the important veriables
 function player_movement(button: string) {
 
+    // first to check the players collision to ditermine if any obsticles
+    // is infront
+    playerCollision()
+
     // resposible for changing the xOffset, this is important because it makes the
-    // rendering function able to move the map according to the xOffset
-    if (button == "a" && player_backwards_partone <= 0 && player_backwards_parttwo <= 0) {
+    // rendering function able to move the map according to the xOffset, it is also 
+    // responsible for chaning the player xoffset which is used to see if there are
+    // ground infront of the player when moving forward
+    if (button == "a" && player_forwards_partone < 1 && player_forwards_parttwo < 1) {
         xOffset -= 1
     } else if (button == "b" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
         xOffset += 1
@@ -92,7 +95,6 @@ function player_movement(button: string) {
     } else if (xOffset > 17) {
         xOffset = 17
     }
-
 }
 
 // this is responsible for deciding wether the gravity should be apllied or not    
@@ -102,7 +104,7 @@ function playerGravity_yOffset() {
 
     // this checks if the player is on the ground or not and it also checks it the
     // player is jumping or not
-    if (onGround == false && isJumping == false) {
+    if (onGround == false && jumpStateObjectCheck == false) {
         player_yOffset += 1
     } else {
         return
@@ -113,7 +115,6 @@ function playerGravity_yOffset() {
 // this is resposible for all the collision dectection befor the movement
 // function 
 function playerCollision() {
-    // giving permission
 
     // player collision check forward
     player_forwards_partone = led.pointBrightness(3, player_yOffset)
@@ -129,32 +130,45 @@ function playerCollision() {
     // player collision check downwards
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
 
-    // check object in the way of the jumping trajectory 
-    jumpStateObjectCheck = led.pointBrightness(3, player_yOffset + 2)
+    // player jump trajectory check, it checks if there would be ground whent the player
+    // lands down in the future
+    player_jump_trajectory = led.pointBrightness(3, player_yOffset + 2)
 
-    // configuring the onGround Veriables
+    // configuring the onGround veriables
     if (player_downwards < 1) {
         onGround = false
     } else if (player_downwards > 1) {
         onGround = true
     }
+    
+    // configuring the jumpStateObjectCheck veriables
+    if (player_jump_trajectory < 1){
+        jumpStateObjectCheck = false
+    } else if (player_jump_trajectory > 1){
+        jumpStateObjectCheck = true
+    }
 
-}
-
-// responsible for rendering the player and the map
-function renderAll() {
-
-    level_one.showImage(xOffset, player_Speed)
-
-    led.plot(2, player_yOffset)
-    led.plot(2, player_yOffset + 1)
 }
 
 // responsible for jumping 
 function goingToJump() {
-    isJumping = true
-    if (onGround == true && player_above < 1 && isJumping == true) {
-        player_yOffset -= 2
-        isJumping = false
+
+    // checking the obsticles above the player and if we are grounded
+    // or not
+    if (onGround == true && player_above < 1) {
+        player_yOffset -= 1
     }
 }
+
+
+// responsible for rendering the player and the map
+function renderAll() {
+
+    // redering the moved level
+    level_one.showImage(xOffset, player_speed)
+
+    // redering the players body
+    led.plot(2, player_yOffset)
+    led.plot(2, player_yOffset + 1)
+}
+
