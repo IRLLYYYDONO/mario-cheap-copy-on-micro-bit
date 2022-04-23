@@ -153,6 +153,9 @@ function playerCollision() {
 // responsible for jumping 
 function goingToJump() {
 
+    // fix bug that I forgot :( but it just fix so why not?
+    playerCollision()
+
     // checking the obsticles above the player and if we are grounded
     // or not
     if (onGround == true && player_above < 1) {
