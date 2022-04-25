@@ -6,7 +6,7 @@ let level_one = images.createBigImage(`
     . . . . . . . . . . . # # # . . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
-    . . # # # # . . # . . . # # # . . . # #
+    . . # # # # . . # . . . # # # . . # # #
     # # . . . . . . . # # # . . . . . . . .
 `)
 
@@ -52,7 +52,7 @@ music.startMelody(notes, MelodyOptions.ForeverInBackground)
 //music.startMelody(notes, MelodyOptions.Forever)
 
 // Start the level
-level_one.showImage(-2)
+renderAll()
 
 while (true) {
 
@@ -159,7 +159,7 @@ function goingToJump() {
     // checking the obsticles above the player and if we are grounded
     // or not
     if (onGround == true && player_above < 1) {
-        player_yOffset -= 1
+        player_yOffset -= 2
     }
 }
 
