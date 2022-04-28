@@ -2,27 +2,14 @@
 // The author of this game is Phea Viphou
 
 // Maps
-let level_1 = images.createBigImage(`
+let level_one = images.createBigImage(`
     . . . . . . . . . . . # # # . . . . . .
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
     . . # # # # . . # . . . # # # . . # # #
     # # . . . . . . . # # # . . . . . . . .
 `)
-let level_2 = images.createBigImage(`
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . . . . . . # # . . . . . .
-    . . . . . . . # # . . . . . . . . # . .
-    . . . . . . # . . # . . . . . # # . # .
-    # # . . # # . . . . . . # # # . . . . #
-`)
-let level_3 = images.createBigImage(`
-    . . . . . . . . . . . . . . . . . . . .
-    . . . . . . . # # # . . . . . . . . . .
-    . . # # . . . . . . . . . . . . . . # .
-    . # . . # . . . . . . . . . . . . # . #
-    . . . . . # # # # # # . . . # # # . . .
-`)
+
 // Music array
 let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4",
     "d", "a", "d5", "f5", "a4", "d5", "f5", "c4", "d", "a", "d5", "f5", "a4", "d5", "f5", "b3", "d4", "g  ",
@@ -38,7 +25,6 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
 // Veriables
 let xOffset = -2
 let onGround = false
-let changeLevels = false
 
 //player info 
 let player_yOffset = 2
@@ -66,9 +52,7 @@ music.startMelody(notes, MelodyOptions.ForeverInBackground)
 //music.startMelody(notes, MelodyOptions.Forever)
 
 // Start the level
-changeLevels = true
 renderAll()
-changeLevels = false
 
 while (true) {
 
@@ -156,11 +140,11 @@ function playerCollision() {
     } else if (player_downwards > 1) {
         onGround = true
     }
-    
+
     // configuring the jumpStateObjectCheck veriables
-    if (player_jump_trajectory < 1){
+    if (player_jump_trajectory < 1) {
         jumpStateObjectCheck = false
-    } else if (player_jump_trajectory > 1){
+    } else if (player_jump_trajectory > 1) {
         jumpStateObjectCheck = true
     }
 
@@ -182,25 +166,11 @@ function goingToJump() {
 
 // responsible for rendering the player and the map
 function renderAll() {
-    let l = 0
 
     // redering the moved level
-    if (changeLevels == false){
-        l += 1
-        if (l = 1) {
-            level_1.showImage(xOffset, player_speed)
-        }
-    }else if (changeLevels == true){
-        l += 1
-        if (l = 1) {
-            level_1.showImage(xOffset, player_speed)
-        }else if (l = 2){
-            level_2.showImage(xOffset, player_speed)
-        }
-    }
+    level_one.showImage(xOffset, player_speed)
 
     // redering the players body
     led.plot(2, player_yOffset)
     led.plot(2, player_yOffset + 1)
 }
-
