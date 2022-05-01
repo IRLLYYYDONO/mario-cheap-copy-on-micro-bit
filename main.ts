@@ -1,13 +1,51 @@
 // This is a mario type game clone made because I was bored and I just thought of somthing challanging to make
 // The author of this game is Phea Viphou
 
+// In Game Assets
+// Main menu
+let mainMenu = images.createImage(`
+    # # # # #
+    # . . . #
+    # # . # #
+    . # # # .
+    . . . . .
+`)
+
+// Death screen
+let deathScreen_face = images.createImage(`
+    # # # # #
+    # . . . #
+    # # . # #
+    . # # # .
+    . . . . .
+`)
+
+let deathScreen_eye = images.createImage(`
+    . . . . .
+    . # . # .
+    . . . . . 
+    . . . . .
+    . . . . .
+`)
+
 // Maps
 let level_one = images.createBigImage(`
-    . . . . . . . . . . . # # # . . . . . .
     . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . # # # . . . . . . . . . . .
+    . # # # # # . . . . . . # # # . . # # #
+    # . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
     . . # # # # . . # . . . # # # . . # # #
     # # . . . . . . . # # # . . . . . . . .
+`)
+
+let level_two = images.createBigImage(`
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . . . . . . . . . . . . . . . .
+    . . . . . # . . . . . . . . . # . . . .
+    . # # # # . . . . # # # # # . . . # # #
+    # . . . . . . . . . . . . . . . . . . .
 `)
 
 // Music array
@@ -22,11 +60,15 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
     "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "g3",
     "b", "d4", "g", "b", "d", "g", "b", "g3", "b3", "d4", "g", "b", "d", "g", "b"]
 
-// Veriables
-let xOffset = -2
-let onGround = false
 
-//player info 
+
+// In Game Veriables
+let xOffset = -2
+let gameState = "go"
+
+// Start Game Veriables
+// player info 
+let onGround = false
 let player_yOffset = 2
 let player_speed = 250 // player speed is messured in ms
 let player_downwards = 0
@@ -40,36 +82,79 @@ let player_forwards_parttwo = 0
 let player_backwards_partone = 0
 let player_backwards_parttwo = 0
 
-//jumping
+// jumping 
 let player_jump_trajectory = 0
 let jumpStateObjectCheck = false
 
+// End Game Veriables 
+let time = 0
+
 
 // Start of code
-music.setVolume(200)
-music.startMelody(notes, MelodyOptions.ForeverInBackground)
+//music.setVolume(200)
+//music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
-//music.startMelody(notes, MelodyOptions.Forever)
+// start of game
+led.setDisplayMode(DisplayMode.Greyscale)
 
 // Start the level
-renderAll()
 
-while (true) {
+// renders the level and player
+renderAll("Level 1")
 
-    // input for button A for going forward
-    if (input.buttonIsPressed(Button.A)) {
-        player_movement("b")
-        playerGravity_yOffset()
-        renderAll()
+// super while loop for the entire game
+while (true){
+    
+    // while loop to start the game functions and end it if loose
+    while (gameState == "go") {
+
+        if (player_yOffset > 4) {
+            gameState = "stop"
+            break
+        }
+
+        // input for button A for going forward
+        if (input.buttonIsPressed(Button.A)) {
+            player_movement("b")
+            playerGravity_yOffset()
+            renderAll("Level 1")
+        }
+
+        // input for button B for jumping
+        if (input.buttonIsPressed(Button.B)) {
+            goingToJump()
+            renderAll("Level 1")
+        }
+
     }
 
-    // input for button B for jumping
-    if (input.buttonIsPressed(Button.B)) {
-        goingToJump()
-        renderAll()
-    }
+    while (gameState == "stop") {
+        
+        // 
+        time += 1
 
-}
+        // clear the screen
+        basic.clearScreen()
+
+        // renderes the death screen
+        renderAll("Death")
+
+        // reset all the player states than bring the player back to 
+        // menu
+        if (time > 1) {
+            basic.clearScreen()
+            basic.showString("YOU LOSE!", 100)
+            gameState = "go"
+            player_yOffset = 2
+            xOffset = -2
+            renderAll("Level 1")
+            break
+        }
+        
+    }
+}   
+
+
 
 // this function is resposible for all the player movement in the game
 // this is used as a organization tool, for all the important veriables
@@ -165,10 +250,31 @@ function goingToJump() {
 
 
 // responsible for rendering the player and the map
-function renderAll() {
+function renderAll(renderState: string) {
 
     // redering the moved level
-    level_one.showImage(xOffset, player_speed)
+    if (renderState == "Death"){
+        
+        // gives the eyes an effect by changing the brightness using Math
+        // random and chaning it back to a normal 255, it makes the eyes
+        // looks like it is glowing
+        led.setBrightness(Math.randomRange(150, 255))
+        deathScreen_eye.showImage(0)
+        led.setBrightness(255)
+
+        basic.clearScreen()
+        
+        deathScreen_face.showImage(0)
+    }else if (renderState == "Level 2") { 
+        
+        // renderes the level assigned by the render state
+        level_two.showImage(xOffset, player_speed)
+
+    }else if (renderState == "Level 1") {
+
+        // renders the level assigned by the render state
+        level_one.showImage(xOffset, player_speed)
+    }
 
     // redering the players body
     led.plot(2, player_yOffset)
