@@ -32,9 +32,6 @@ let deathScreen_eye = images.createImage(`
 let level_one = images.createBigImage(`
     . . . . . . . . . . . . . . . . . . . .
     . . . . . . . . . . . . . . . . . . . .
-    . . . . . . # # # . . . . . . . . . . .
-    . # # # # # . . . . . . # # # . . # # #
-    # . . . . . . . . . . . . . . . . . . .
     . . . . . . # # . . . . . . . . . . . .
     . . # # # # . . # . . . # # # . . # # #
     # # . . . . . . . # # # . . . . . . . .
@@ -63,12 +60,15 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
 
 
 // In Game Veriables
-let xOffset = -2
-let gameState = "go"
+let gameState = "start"
 
 // Start Game Veriables
+let levels = 1
+let string_levels = "1"
+
 // player info 
 let onGround = false
+let xOffset = -2
 let player_yOffset = 2
 let player_speed = 250 // player speed is messured in ms
 let player_downwards = 0
@@ -100,12 +100,57 @@ led.setDisplayMode(DisplayMode.Greyscale)
 // Start the level
 
 // renders the level and player
-renderAll("Level 1")
+// renderAll("Level 1")
 
 // super while loop for the entire game
 while (true){
     
-    // while loop to start the game functions and end it if loose
+    // assencially the main menu of the game 
+    while (gameState == "start"){
+        
+        // tells the user information
+        lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
+
+        // checking whether the user wants to preveiw another level or they want to play the current
+        // preveiwed levels
+        if (input.buttonIsPressed(Button.A)){
+            
+            // plus on level every time we click the A button, this is used to change the level
+            // preveiws
+            levels += 1
+
+            // limiting the levels so than it does not go over the the amount of levels that we 
+            // have
+            if (levels > 2){
+                levels = 1
+            }
+            
+            // change the string_levels, important later when we want to render different levels 
+            if (levels == 1){
+                string_levels = "1"
+            } else if (levels == 2) {
+                string_levels = "2"
+            }
+
+            // changing the level preveiws
+            renderAll("Level " + string_levels)
+            
+            // breaking out of the while loop
+            break
+
+        } else if (input.buttonIsPressed(Button.B)){
+            
+            // changing the game state so it would start to activate the in game logic
+            gameState = "go"
+            
+            // break out fo the while loop
+            break
+
+        }
+
+    }
+    
+    // in game functions and logic
     while (gameState == "go") {
 
         if (player_yOffset > 4) {
@@ -117,20 +162,21 @@ while (true){
         if (input.buttonIsPressed(Button.A)) {
             player_movement("b")
             playerGravity_yOffset()
-            renderAll("Level 1")
+            renderAll("Level " + string_levels)
         }
 
         // input for button B for jumping
         if (input.buttonIsPressed(Button.B)) {
             goingToJump()
-            renderAll("Level 1")
+            renderAll("Level " + string_levels)
         }
 
     }
-
+    
+    // death screen
     while (gameState == "stop") {
         
-        // 
+        // this is use to time the amount of death screen will pop and disapear
         time += 1
 
         // clear the screen
@@ -142,12 +188,21 @@ while (true){
         // reset all the player states than bring the player back to 
         // menu
         if (time > 1) {
+            
+            // clears the LED array
             basic.clearScreen()
-            basic.showString("YOU LOSE!", 100)
-            gameState = "go"
+            
+            // tells the user that they lost
+            basic.showString("YOU LOSE!", 75)
+            
+            // change the game state so than the user or player would return to the mainMenu
+            gameState = "start"
+            
+            // reseting all the important player veriables
             player_yOffset = 2
             xOffset = -2
-            renderAll("Level 1")
+            
+            // breaking out of the while loop
             break
         }
         
