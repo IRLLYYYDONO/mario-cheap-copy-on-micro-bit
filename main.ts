@@ -1,5 +1,5 @@
 // This is a mario type game clone made because I was bored and I just thought of somthing challanging to make
-// The author of this game is Phea Viphou
+// The author of this game is Phea Viphou, Henleap Him, And David Jeremiah Garcia
 
 // In Game Assets
 // Main menu
