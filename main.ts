@@ -114,7 +114,7 @@ while (true){
         // get new joystick and button information
         x = pins.analogReadPin(AnalogPin.P0)
         y = pins.analogReadPin(AnalogPin.P1)
-        button = pins.digitalReadPin(DigitalPin.P3)
+        button = pins.digitalReadPin(DigitalPin.P2)
 
         
         // tells the user information
@@ -183,7 +183,7 @@ while (true){
         // get new joystick and button information
         x = pins.analogReadPin(AnalogPin.P0)
         y = pins.analogReadPin(AnalogPin.P1)
-        button = pins.digitalReadPin(DigitalPin.P3)
+        button = pins.digitalReadPin(DigitalPin.P2)
 
         // check if the player did not fell throught the level and lost
         if (player_yOffset > 4) {
