@@ -62,6 +62,10 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
 // In Game Veriables
 let gameState = "start"
 
+// Input Devices
+let x_controls = pins.analogReadPin(AnalogPin.P1)
+let buttton_controles = pins.digitalReadPin(DigitalPin.P2)
+
 // Start Game Veriables
 let levels = 1
 let string_levels = "1"
@@ -94,9 +98,6 @@ let time = 0
 //music.setVolume(200)
 //music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
-// start of game
-led.setDisplayMode(DisplayMode.Greyscale)
-
 // Start the level
 
 // renders the level and player
@@ -107,13 +108,18 @@ while (true){
     
     // assencially the main menu of the game 
     while (gameState == "start"){
-        
+
+        x_controls = pins.analogReadPin(AnalogPin.P1)
+        buttton_controles = pins.digitalReadPin(DigitalPin.P2)
+
         // tells the user information
-        lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
+        //lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
 
         // checking whether the user wants to preveiw another level or they want to play the current
         // preveiwed levels
-        if (input.buttonIsPressed(Button.A)){
+        if (x_controls < 500){
+
+            basic.pause(1000)
             
             // plus on level every time we click the A button, this is used to change the level
             // preveiws
@@ -138,7 +144,7 @@ while (true){
             // breaking out of the while loop
             break
 
-        } else if (input.buttonIsPressed(Button.B)){
+        } else if (buttton_controles > 0){
             
             // changing the game state so it would start to activate the in game logic
             gameState = "go"
@@ -153,20 +159,23 @@ while (true){
     // in game functions and logic
     while (gameState == "go") {
 
+        x_controls = pins.analogReadPin(AnalogPin.P1)
+        buttton_controles = pins.digitalReadPin(DigitalPin.P2)
+
         if (player_yOffset > 4) {
             gameState = "stop"
             break
         }
 
         // input for button A for going forward
-        if (input.buttonIsPressed(Button.A)) {
+        if (x_controls < 500) {
             player_movement("b")
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
 
         // input for button B for jumping
-        if (input.buttonIsPressed(Button.B)) {
+        if (buttton_controles > 0) {
             goingToJump()
             renderAll("Level " + string_levels)
         }
@@ -202,6 +211,9 @@ while (true){
             player_yOffset = 2
             xOffset = -2
             
+            // renderes the main menu map
+            renderAll("Level " + string_levels)
+
             // breaking out of the while loop
             break
         }
