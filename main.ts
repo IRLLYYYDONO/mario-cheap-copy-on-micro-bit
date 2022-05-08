@@ -1,5 +1,5 @@
 // This is a mario type game clone made because I was bored and I just thought of somthing challanging to make
-// The author of this game is Phea Viphou, Henleap Him, And David Jeremiah Garcia
+// The author of this game is Phea Viphou
 
 // In Game Assets
 // Main menu
@@ -57,10 +57,7 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
     "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "g3",
     "b", "d4", "g", "b", "d", "g", "b", "g3", "b3", "d4", "g", "b", "d", "g", "b"]
 
-// Hardware Veriables
-let x = pins.analogReadPin(AnalogPin.P0)
-let y = pins.analogReadPin(AnalogPin.P1)
-let button = pins.digitalReadPin(DigitalPin.P2)
+
 
 // In Game Veriables
 let gameState = "start"
@@ -111,18 +108,12 @@ while (true){
     // assencially the main menu of the game 
     while (gameState == "start"){
         
-        // get new joystick and button information
-        x = pins.analogReadPin(AnalogPin.P0)
-        y = pins.analogReadPin(AnalogPin.P1)
-        button = pins.digitalReadPin(DigitalPin.P2)
-
-        
         // tells the user information
-        lcd1602.putString("Displayed Map " + string_levels + " Presse Button To Select", 0, 0)
+        lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
 
         // checking whether the user wants to preveiw another level or they want to play the current
         // preveiwed levels
-        if (x < 400){
+        if (input.buttonIsPressed(Button.A)){
             
             // plus on level every time we click the A button, this is used to change the level
             // preveiws
@@ -143,29 +134,11 @@ while (true){
 
             // changing the level preveiws
             renderAll("Level " + string_levels)
+            
+            // breaking out of the while loop
+            break
 
-        } else if (x > 500){
-            // minus whens the user move the joystick to the left, this is used to change the level
-            // preveiws
-            levels -= 1
-
-            // limiting the levels so than it does not go over the the amount of levels that we 
-            // have
-            if (levels > 2) {
-                levels = 1
-            }
-
-            // change the string_levels, important later when we want to render different levels 
-            if (levels == 1) {
-                string_levels = "1"
-            } else if (levels == 2) {
-                string_levels = "2"
-            }
-
-            // changing the level preveiws
-            renderAll("Level " + string_levels)
-        
-        } else if (button == 1){
+        } else if (input.buttonIsPressed(Button.B)){
             
             // changing the game state so it would start to activate the in game logic
             gameState = "go"
@@ -180,31 +153,20 @@ while (true){
     // in game functions and logic
     while (gameState == "go") {
 
-        // get new joystick and button information
-        x = pins.analogReadPin(AnalogPin.P0)
-        y = pins.analogReadPin(AnalogPin.P1)
-        button = pins.digitalReadPin(DigitalPin.P2)
-
-        // check if the player did not fell throught the level and lost
         if (player_yOffset > 4) {
             gameState = "stop"
             break
         }
 
-        // joystick input for going forward
-        if (x < 400) {
+        // input for button A for going forward
+        if (input.buttonIsPressed(Button.A)) {
             player_movement("b")
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
-        } else if (x > 500) {
-            player_movement("a")
-            playerGravity_yOffset()
-            renderAll("Level " + string_levels)
-
         }
 
-        // button input for jumping
-        if (button == 1) {
+        // input for button B for jumping
+        if (input.buttonIsPressed(Button.B)) {
             goingToJump()
             renderAll("Level " + string_levels)
         }
@@ -251,7 +213,7 @@ while (true){
 
 // this function is resposible for all the player movement in the game
 // this is used as a organization tool, for all the important veriables
-function player_movement(movementType: string) {
+function player_movement(button: string) {
 
     // first to check the players collision to ditermine if any obsticles
     // is infront
@@ -261,9 +223,9 @@ function player_movement(movementType: string) {
     // rendering function able to move the map according to the xOffset, it is also 
     // responsible for chaning the player xoffset which is used to see if there are
     // ground infront of the player when moving forward
-    if (movementType == "a" && player_forwards_partone < 1 && player_forwards_parttwo < 1) {
+    if (button == "a" && player_forwards_partone < 1 && player_forwards_parttwo < 1) {
         xOffset -= 1
-    } else if (movementType == "b" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
+    } else if (button == "b" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
         xOffset += 1
     }
 
