@@ -109,6 +109,7 @@ while (true){
     // assencially the main menu of the game 
     while (gameState == "start"){
 
+        // reconfiguring each pin value
         x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
@@ -159,22 +160,31 @@ while (true){
     // in game functions and logic
     while (gameState == "go") {
 
+        // reconfiguring the pin values
         x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
+        // see if the player died
         if (player_yOffset > 4) {
             gameState = "stop"
             break
         }
 
-        // input for button A for going forward
+        // input for the player to move right 
         if (x_controls < 400) {
             player_movement("b")
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
 
-        // input for button B for jumping
+        // input for the player to move left
+        if (x_controls > 500){
+            player_movement("a")
+            playerGravity_yOffset()
+            renderAll("Level " + string_levels)
+        }
+
+        // input for jumping 
         if (buttton_controles < 1) {
             goingToJump()
             renderAll("Level " + string_levels)
