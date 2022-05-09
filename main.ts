@@ -1,5 +1,5 @@
 // This is a mario type game clone made because I was bored and I just thought of somthing challanging to make
-// The author of this game is Phea Viphou
+// The author of this game is Phea Viphou, Hengleap Him, and David Jeremiah Garcia
 
 // In Game Assets
 // Main menu
@@ -63,7 +63,7 @@ let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5
 let gameState = "start"
 
 // Input Devices
-let x_controls = pins.analogReadPin(AnalogPin.P1)
+let x_controls = pins.analogReadPin(AnalogPin.P0)
 let buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
 // Start Game Veriables
@@ -109,7 +109,7 @@ while (true){
     // assencially the main menu of the game 
     while (gameState == "start"){
 
-        x_controls = pins.analogReadPin(AnalogPin.P1)
+        x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
         // tells the user information
@@ -117,7 +117,7 @@ while (true){
 
         // checking whether the user wants to preveiw another level or they want to play the current
         // preveiwed levels
-        if (x_controls < 500){
+        if (x_controls < 400){
 
             basic.pause(1000)
             
@@ -144,7 +144,7 @@ while (true){
             // breaking out of the while loop
             break
 
-        } else if (buttton_controles > 0){
+        } else if (buttton_controles < 1){
             
             // changing the game state so it would start to activate the in game logic
             gameState = "go"
@@ -159,7 +159,7 @@ while (true){
     // in game functions and logic
     while (gameState == "go") {
 
-        x_controls = pins.analogReadPin(AnalogPin.P1)
+        x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
         if (player_yOffset > 4) {
@@ -168,14 +168,14 @@ while (true){
         }
 
         // input for button A for going forward
-        if (x_controls < 500) {
+        if (x_controls < 400) {
             player_movement("b")
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
 
         // input for button B for jumping
-        if (buttton_controles > 0) {
+        if (buttton_controles < 1) {
             goingToJump()
             renderAll("Level " + string_levels)
         }
