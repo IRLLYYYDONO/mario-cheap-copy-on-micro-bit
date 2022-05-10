@@ -2,15 +2,6 @@
 // The author of this game is Phea Viphou, Hengleap Him, and David Jeremiah Garcia
 
 // In Game Assets
-// Main menu
-let mainMenu = images.createImage(`
-    # # # # #
-    # . . . #
-    # # . # #
-    . # # # .
-    . . . . .
-`)
-
 // Death screen
 let deathScreen_face = images.createImage(`
     # # # # #
@@ -45,7 +36,7 @@ let level_two = images.createBigImage(`
     # . . . . . . . . . . . . . . . . . . . . 
 `)
 
-// Music array
+// Music array (not in use)
 let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4",
     "d", "a", "d5", "f5", "a4", "d5", "f5", "c4", "d", "a", "d5", "f5", "a4", "d5", "f5", "b3", "d4", "g  ",
     "d5", "f5", "g4", "d5", "f5", "b3", "d4", "g", "d5", "f5", "g4", "d5", "f5", "c4", "e", "g", "c5", "e5",
@@ -87,7 +78,8 @@ let player_backwards_partone = 0
 let player_backwards_parttwo = 0
 
 // jumping 
-let player_jump_trajectory = 0
+let player_jump_trajectory_front = 0
+let player_jump_trajectory_back = 0
 let jumpStateObjectCheck = false
 
 // End Game Veriables 
@@ -95,8 +87,8 @@ let time = 0
 
 
 // Start of code
-//music.setVolume(200)
-//music.startMelody(notes, MelodyOptions.ForeverInBackground)
+music.setVolume(200)
+music.startMelody(notes, MelodyOptions.ForeverInBackground)
 
 // Start the level
 
@@ -120,7 +112,8 @@ while (true){
         // preveiwed levels
         if (x_controls < 400){
 
-            basic.pause(1000)
+            // pause it for a bit
+            basic.pause(250)
             
             // plus on level every time we click the A button, this is used to change the level
             // preveiws
@@ -164,9 +157,12 @@ while (true){
         x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
-        // see if the player died
+        // see if the player died or win
         if (player_yOffset > 4) {
             gameState = "stop"
+            break
+        } else if (xOffset >= 17) {
+            gameState = "win"
             break
         }
 
@@ -192,6 +188,29 @@ while (true){
 
     }
     
+    while (gameState == "win") {
+
+        // clears the LED screen
+        basic.clearScreen()
+
+        // tells the user that they win
+        basic.showString("YOU WIN!", 75)
+
+        // change the game state so than the user or player would return to the mainMenu
+        gameState = "start"
+
+        // reseting all the important player veriables
+        player_yOffset = 2
+        xOffset = -2
+
+        // renderes the main menu map
+        renderAll("Level " + string_levels)
+
+        // breaking out of the while loop
+        break
+
+    }
+
     // death screen
     while (gameState == "stop") {
         
@@ -294,7 +313,8 @@ function playerCollision() {
 
     // player jump trajectory check, it checks if there would be ground whent the player
     // lands down in the future
-    player_jump_trajectory = led.pointBrightness(3, player_yOffset + 2)
+    player_jump_trajectory_front = led.pointBrightness(3, player_yOffset + 2)
+    player_jump_trajectory_back = led.pointBrightness(1, player_yOffset + 2)
 
     // configuring the onGround veriables
     if (player_downwards < 1) {
@@ -304,9 +324,9 @@ function playerCollision() {
     }
 
     // configuring the jumpStateObjectCheck veriables
-    if (player_jump_trajectory < 1) {
+    if (player_jump_trajectory_front < 1 && player_jump_trajectory_back < 1) {
         jumpStateObjectCheck = false
-    } else if (player_jump_trajectory > 1) {
+    } else if (player_jump_trajectory_front > 1 && player_jump_trajectory_back > 1) {
         jumpStateObjectCheck = true
     }
 
