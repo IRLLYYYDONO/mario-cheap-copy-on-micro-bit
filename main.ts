@@ -323,11 +323,16 @@ function playerCollision() {
         onGround = true
     }
 
-    // configuring the jumpStateObjectCheck veriables
-    if (player_jump_trajectory_front < 1 && player_jump_trajectory_back < 1) {
-        jumpStateObjectCheck = false
-    } else if (player_jump_trajectory_front > 1 && player_jump_trajectory_back > 1) {
+    // configuring the jumpStateObjectCheck veriables, why they are splited is because
+    // when jumping obviously you could try to move right or left either way the block
+    // cannot be on both sides thus, if I use the && it could make the if function false
+    // making the player glitch into the blocks
+    if (player_jump_trajectory_back > 1) {
         jumpStateObjectCheck = true
+    } else if (player_jump_trajectory_front > 1) {
+        jumpStateObjectCheck = true
+    } else {
+        jumpStateObjectCheck = false
     }
 
 }
