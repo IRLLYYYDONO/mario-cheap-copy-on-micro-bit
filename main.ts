@@ -267,9 +267,6 @@ function player_movement(button: string) {
 // the jumping function
 function playerGravity_yOffset() {
 
-    // check for jumping collision
-    playerJumpCollision()
-
     // this checks if the player is on the ground or not and it also checks it the
     // player is jumping or not
     if (onGround == false && jumpStateObjectCheck == false) {
