@@ -246,11 +246,11 @@ function player_movement(button: string) {
     // rendering function able to move the map according to the xOffset, it is also 
     // responsible for chaning the player xoffset which is used to see if there are
     // ground infront of the player when moving forward
-    if (button == "a" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
+    if (button == "a" && player_forwards_partone < 1 && player_forwards_parttwo < 1) {
         player_movement_direction = "backwards"
         playerJumpCollision()
         xOffset -= 1
-    } else if (button == "b" && player_backwards_partone <= 0 && player_backwards_parttwo <= 0) {
+    } else if (button == "b" && player_backwards_partone < 1 && player_backwards_parttwo < 1) {
         player_movement_direction = "forwards"
         playerJumpCollision()
         xOffset += 1
