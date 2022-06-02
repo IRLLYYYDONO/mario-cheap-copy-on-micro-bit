@@ -24,8 +24,8 @@ let level_one = images.createBigImage(`
     . . . . . . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . . . . . . 
     . . . . . . # # . . . . . . . . . . . # . 
-    . . # # # # . # # . . . # # # . . # # # . 
-    # # . . . . . . # # # # . . . . . . . . . 
+    . . # # # # . . # . . . # # # . . # # # . 
+    # # . . . . . . . # # # . . . . . . . . . 
 `)
 
 let level_two = images.createBigImage(`
@@ -36,7 +36,17 @@ let level_two = images.createBigImage(`
     # . . . . . . . . . . . . . . . . . . . . 
 `)
 
-
+// Music array (not in use)
+let notes = ["c4:1", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4",
+    "d", "a", "d5", "f5", "a4", "d5", "f5", "c4", "d", "a", "d5", "f5", "a4", "d5", "f5", "b3", "d4", "g  ",
+    "d5", "f5", "g4", "d5", "f5", "b3", "d4", "g", "d5", "f5", "g4", "d5", "f5", "c4", "e", "g", "c5", "e5",
+    "g4", "c5", "e5", "c4", "e", "g", "c5", "e5", "g4", "c5", "e5", "c4", "e", "a", "e5", "a5", "a4", "e5",
+    "a5", "c4", "e", "a", "e5", "a5", "a4", "e5", "a5", "c4", "d", "f#", "a", "d5", "f#4", "a", "d5", "c4",
+    "d", "f#", "a", "d5", "f#4", "a", "d5", "b3", "d4", "g", "d5", "g5", "g4", "d5", "g5", "b3", "d4", "g",
+    "d5", "g5", "g4", "d5", "g5", "b3", "c4", "e", "g", "c5", "e4", "g", "c5", "b3", "c4", "e", "g", "c5",
+    "e4", "g", "c5", "a3", "c4", "e", "g", "c5", "e4", "g", "c5", "a3", "c4", "e", "g", "c5", "e4", "g",
+    "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "d3", "a", "d4", "f#", "c5", "d4", "f#", "c5", "g3",
+    "b", "d4", "g", "b", "d", "g", "b", "g3", "b3", "d4", "g", "b", "d", "g", "b"]
 
 
 
@@ -58,7 +68,7 @@ let player_yOffset = 2
 let player_speed = 250 // player speed is messured in ms
 let player_downwards = 0
 let player_above = 0
-let player_movement_direction = "Null"
+let movment_directions = "Null"
 
 // player collision check forward
 let player_forwards_partone = 0
@@ -77,6 +87,15 @@ let jumpStateObjectCheck = false
 let time = 0
 
 
+// Start of code
+music.setVolume(200)
+music.startMelody(notes, MelodyOptions.ForeverInBackground)
+
+// Start the level
+
+// renders the level and player
+// renderAll("Level 1")
+
 // super while loop for the entire game
 while (true){
     
@@ -87,6 +106,8 @@ while (true){
         x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
+        // tells the user information
+        //lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
 
         // checking whether the user wants to preveiw another level or they want to play the current
         // preveiwed levels
@@ -149,7 +170,7 @@ while (true){
         // input for the player to move right 
         if (x_controls < 400) {
             player_movement("b")
-            //playerJumpCollision()
+            playerJumpCollision()
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
@@ -157,7 +178,7 @@ while (true){
         // input for the player to move left
         if (x_controls > 500){
             player_movement("a")
-            //playerJumpCollision()
+            playerJumpCollision()
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
@@ -246,16 +267,13 @@ function player_movement(button: string) {
     // rendering function able to move the map according to the xOffset, it is also 
     // responsible for chaning the player xoffset which is used to see if there are
     // ground infront of the player when moving forward
-    if (button == "a" && player_forwards_partone < 1 && player_forwards_parttwo < 1) {
-        player_movement_direction = "backwards"
-        playerJumpCollision()
+    if (button == "a" && player_backwards_partone < 1 && player_backwards_parttwo < 1) {
         xOffset -= 1
-    } else if (button == "b" && player_backwards_partone < 1 && player_backwards_parttwo < 1) {
-        player_movement_direction = "forwards"
-        playerJumpCollision()
+        movment_directions = "Left"
+    } else if (button == "b" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
         xOffset += 1
+        movment_directions = "Right"
     }
-
 
     // limit where the player could move, so the player wont move off the map
     if (xOffset < -2) {
@@ -298,6 +316,11 @@ function playerCollision() {
     // player collision check downwards
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
 
+    // player jump trajectory check, it checks if there would be ground whent the player
+    // lands down in the future
+    player_jump_trajectory_front = led.pointBrightness(3, player_yOffset + 2)
+    player_jump_trajectory_back = led.pointBrightness(1, player_yOffset + 2)
+
     // configuring the onGround veriables
     if (player_downwards < 1) {
         onGround = false
@@ -306,22 +329,20 @@ function playerCollision() {
     }
 }
 
-
 function playerJumpCollision() {
-
-    // player jump trajectory check, it checks if there would be ground whent the player
-    // lands down in the future
-    player_jump_trajectory_front = led.pointBrightness(3, player_yOffset + 2)
-    player_jump_trajectory_back = led.pointBrightness(1, player_yOffset + 2)
     
-    // configuring the jumpStateObjectCheck veriables
-    if (player_jump_trajectory_front < 1 && player_movement_direction == "forwards") {
-        jumpStateObjectCheck = false
-    } else if (player_jump_trajectory_front < 1 && player_movement_direction == "backwards") {
-        jumpStateObjectCheck = false
-    } else {
+    // configuring the jumpStateObjectCheck veriables, why they are splited is because
+    // when jumping obviously you could try to move right or left either way the block
+    // cannot be on both sides thus, if I use the && it could make the if function false
+    // making the player glitch into the blocks
+    if (player_jump_trajectory_back > 1 && movment_directions == "Left") {
         jumpStateObjectCheck = true
+    } else if (player_jump_trajectory_front > 1 && movment_directions == "Right") {
+        jumpStateObjectCheck = true
+    } else {
+        jumpStateObjectCheck = false
     }
+
 }
 
 // responsible for jumping 
