@@ -317,12 +317,12 @@ function playerCollision() {
 function playerJumpCollision() {
     
     // configuring the jumpStateObjectCheck veriables
-    if (player_jump_trajectory_front > 1 && player_movement_direction == "forwards") {
-        jumpStateObjectCheck = true
-    } else if (player_jump_trajectory_front > 1 && player_movement_direction == "backwards") {
-        jumpStateObjectCheck = true
-    } else {
+    if (player_jump_trajectory_front < 1 && player_movement_direction == "forwards") {
         jumpStateObjectCheck = false
+    } else if (player_jump_trajectory_front < 1 && player_movement_direction == "backwards") {
+        jumpStateObjectCheck = false
+    } else {
+        jumpStateObjectCheck = true
     }
 }
 
