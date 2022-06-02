@@ -24,8 +24,8 @@ let level_one = images.createBigImage(`
     . . . . . . . . . . . . . . . . . . . . . 
     . . . . . . . . . . . . . . . . . . . . . 
     . . . . . . # # . . . . . . . . . . . # . 
-    . . # # # # . . # . . . # # # . . # # # . 
-    # # . . . . . . . # # # . . . . . . . . . 
+    . . # # # # . # # . . . # # # . . # # # . 
+    # # . . . . . . # # # # . . . . . . . . . 
 `)
 
 let level_two = images.createBigImage(`
@@ -149,7 +149,7 @@ while (true){
         // input for the player to move right 
         if (x_controls < 400) {
             player_movement("b")
-            playerJumpCollision()
+            //playerJumpCollision()
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
@@ -157,7 +157,7 @@ while (true){
         // input for the player to move left
         if (x_controls > 500){
             player_movement("a")
-            playerJumpCollision()
+            //playerJumpCollision()
             playerGravity_yOffset()
             renderAll("Level " + string_levels)
         }
@@ -247,12 +247,15 @@ function player_movement(button: string) {
     // responsible for chaning the player xoffset which is used to see if there are
     // ground infront of the player when moving forward
     if (button == "a" && player_forwards_partone <= 0 && player_forwards_parttwo <= 0) {
-        xOffset -= 1
         player_movement_direction = "backwards"
+        playerJumpCollision()
+        xOffset -= 1
     } else if (button == "b" && player_backwards_partone <= 0 && player_backwards_parttwo <= 0) {
-        xOffset += 1
         player_movement_direction = "forwards"
+        playerJumpCollision()
+        xOffset += 1
     }
+
 
     // limit where the player could move, so the player wont move off the map
     if (xOffset < -2) {
@@ -295,11 +298,6 @@ function playerCollision() {
     // player collision check downwards
     player_downwards = led.pointBrightness(2, player_yOffset + 2)
 
-    // player jump trajectory check, it checks if there would be ground whent the player
-    // lands down in the future
-    player_jump_trajectory_front = led.pointBrightness(3, player_yOffset + 2)
-    player_jump_trajectory_back = led.pointBrightness(1, player_yOffset + 2)
-
     // configuring the onGround veriables
     if (player_downwards < 1) {
         onGround = false
@@ -310,6 +308,11 @@ function playerCollision() {
 
 
 function playerJumpCollision() {
+
+    // player jump trajectory check, it checks if there would be ground whent the player
+    // lands down in the future
+    player_jump_trajectory_front = led.pointBrightness(3, player_yOffset + 2)
+    player_jump_trajectory_back = led.pointBrightness(1, player_yOffset + 2)
     
     // configuring the jumpStateObjectCheck veriables
     if (player_jump_trajectory_front < 1 && player_movement_direction == "forwards") {
