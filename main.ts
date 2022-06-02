@@ -87,8 +87,6 @@ while (true){
         x_controls = pins.analogReadPin(AnalogPin.P0)
         buttton_controles = pins.digitalReadPin(DigitalPin.P2)
 
-        // tells the user information
-        //lcd1602.putString("Displayed Map " + string_levels + " Presse Button B To Select", 0, 0)
 
         // checking whether the user wants to preveiw another level or they want to play the current
         // preveiwed levels
